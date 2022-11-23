@@ -7,6 +7,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from stable_baselines3.common.vec_env import DummyVecEnv
+import talib as ta
+
 
 def process_future_data(path):
     df = pd.read_csv(path).dropna()
@@ -69,6 +71,31 @@ def add_covariance(df,lb = 252):
     df = df.sort_values(['date','tic']).reset_index(drop=True)
     
     return df 
+
+
+def create_features(df_init):
+    
+    df_final = pd.DataFrame()
+    tickers = df_init['tic'].unique().tolist()
+    for i in tickers:
+        df = df_init[df_init['tic']== i]
+
+        df['RSI'] = ta.RSI(df['close'])
+        df['slowk'], df['slowd'] = ta.STOCH(df['high'], df['low'], df['close'])
+        df['WILLR']= ta.WILLR(df['high'], df['low'] , df['close'])
+        df['MACD'],_ ,_ = ta.MACD(df['close'])
+        df['ROC'] = ta.ROC(df['close'])
+        df['OBV'] = ta.OBV(df['close'], df['volume'])
+
+        df['lag_20'] = df['close'].pct_change(20)
+        df['lag_40'] = df['close'].pct_change(40)
+        df['lag_60'] = df['close'].pct_change(60)
+        df = df.dropna()
+        df_final = df_final.append(df)
+        
+    df_final= df_final.sort_values(by='date')
+    return df_final
+
 
 class StockPortfolioEnv(gym.Env):
     """A single stock trading environment for OpenAI gym
