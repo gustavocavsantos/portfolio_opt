@@ -1,0 +1,7 @@
+OS: Darwin-21.5.0-x86_64-i386-64bit Darwin Kernel Version 21.5.0: Tue Apr 26 20:57:23 PDT 2022; root:xnu-8020.121.3~2/RELEASE_ARM64_T8110
+Python: 3.7.13
+Stable-Baselines3: 1.6.2
+PyTorch: 1.13.0
+GPU Enabled: False
+Numpy: 1.21.6
+Gym: 0.21.0
